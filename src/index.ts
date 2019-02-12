@@ -1,6 +1,6 @@
 import { ApolloServer, gql } from 'apollo-server';
 import "reflect-metadata";
-import { createConnection } from 'typeorm';
+import { createConnection, getConnection } from 'typeorm';
 import { ResolverMap } from './types/ResolverTypes';
 import { User } from './entity/User';
 
@@ -44,11 +44,14 @@ const resolvers: ResolverMap = {
       }
       return false;
     },
-    deleteUser: (_, {id})=>{
-      try{
-        User.delete(id);
+    deleteUser: (_, { id }) => {
+      try {
+        // User.delete(id);
+
+        // Change above code to querybuilder 
+        getConnection().createQueryBuilder().delete().from(User).where("id = :id", { id }).execute();
         return true;
-      }catch(err){
+      } catch (err) {
         console.log(err);
       }
       return false;
